@@ -1,0 +1,27 @@
+- insert:
+    - id: tool-native-media
+      name: 'dsh-subscription-media-suite'
+      config:
+        mode: media
+    - id: subagent-build-native
+      name: 'dsh-subscription-media-suite'
+      config:
+        mode: acp
+        providerName: build-native
+        command: grok
+        args: [agent, stdio]
+        permission: reject
+        env: {}
+        disposeEofGraceMs: 6000
+        disposeGraceMs: 3000
+    - id: subagent-build-media
+      name: 'dsh-subscription-media-suite'
+      config:
+        mode: acp
+        providerName: build-media
+        command: grok
+        args: [--tools, 'image_gen,image_edit,image_to_video,reference_to_video', --always-approve, agent, stdio]
+        permission: allow
+        env: {}
+        disposeEofGraceMs: 6000
+        disposeGraceMs: 3000

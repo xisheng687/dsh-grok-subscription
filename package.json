@@ -1,0 +1,39 @@
+{
+  "name": "dsh-subscription-media-suite",
+  "version": "0.1.0",
+  "description": "Native DSH audio/video cards and a compliant ACP bridge for subscription-backed multimodal work.",
+  "type": "module",
+  "main": "index.js",
+  "exports": { ".": "./index.js", "./client": "./client.js", "./package.json": "./package.json" },
+  "files": ["index.js", "client.js", "cordis.patch.yml", "README.md", "README.zh.md", "CHANGELOG.md", "SECURITY.md", "THIRD_PARTY_NOTICES.md", "LICENSE", "packages"],
+  "dsh": {
+    "bundle": { "patch": "./cordis.patch.yml" },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-ui-conversation",
+        "@deepseek-ai/dsh-client-ui-slots"
+      ]
+    }
+  },
+  "dependencies": {
+    "@deepseek-ai/dsh-subagent-acp": "^0.1.0-rc.7"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh-tools": "^0.1.0-rc.7",
+    "@deepseek-ai/dsh-user-questions": "^0.1.0-rc.7",
+    "@deepseek-ai/dsh-client-runtime": "^0.1.0-rc.7",
+    "@deepseek-ai/dsh-client-ui-conversation": "^0.1.0-rc.7",
+    "@deepseek-ai/dsh-client-ui-slots": "^0.1.0-rc.7",
+    "react": "^18.2.0"
+  },
+  "repository": { "type": "git", "url": "git+https://github.com/xisheng687/dsh-subscription-media-suite.git" },
+  "homepage": "https://github.com/xisheng687/dsh-subscription-media-suite#readme",
+  "bugs": "https://github.com/xisheng687/dsh-subscription-media-suite/issues",
+  "keywords": ["deepseek-harness", "dsh-plugin", "multimodal", "acp", "audio", "video"],
+  "publishConfig": { "access": "public" },
+  "license": "MIT",
+  "engines": { "node": ">=22.19.0" }
+}
