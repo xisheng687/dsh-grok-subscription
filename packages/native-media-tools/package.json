@@ -1,7 +1,7 @@
 {
   "name": "dsh-native-media-tools",
-  "version": "0.1.0",
-  "description": "DeepSeek Harness native audio/video cards plus xAI API TTS, STT, and sampled long-video understanding.",
+  "version": "0.2.0",
+  "description": "DeepSeek Harness native audio/video cards plus xAI API TTS, STT, and original-file-first video understanding.",
   "repository": { "type": "git", "url": "git+https://github.com/xisheng687/dsh-subscription-media-suite.git", "directory": "packages/native-media-tools" },
   "homepage": "https://github.com/xisheng687/dsh-subscription-media-suite#readme",
   "keywords": ["deepseek-harness", "dsh-plugin", "audio", "video", "multimodal"],

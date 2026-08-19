@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.2.0 - 2026-08-19
+
+### Features
+
+- Add original-file-first MP4/MOV analysis with the complete soundtrack.
+- Delete uploaded source files after analysis and set a one-hour server expiry.
+- Add `auto`, strict `original`, and bandwidth-saving `sampled` strategies.
+- Preserve word timestamps, filler words, and speaker diarization in sampled fallback.
+- Send eligible MP4/MKV containers directly to STT; replace 48 kbps MP3 chunks with FLAC otherwise.
+
+### Tests
+
+- Add a local API simulator covering multipart field ordering, `input_file`, cleanup, and fallback.
+
 ## 0.1.0 - 2026-08-19
 
 ### Features
