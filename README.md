@@ -1,13 +1,20 @@
-# DSH Subscription Media Suite
+# Bring Your Grok Subscription into DeepSeek Harness
 
-AI tools often produce a file and leave chat with an awkward path. This DSH
-plugin suite turns local audio/video into persistent playable cards and adds an
-original-file-first video workflow—without patching DeepSeek Harness core.
+Paying for Grok but having it confined to the Grok Build CLI makes multi-agent
+work awkward: tasks, context, and generated media have to be moved by hand.
+This unofficial DSH plugin suite connects the officially logged-in Grok Build
+CLI to DeepSeek Harness as an ACP subagent. The official CLI keeps ownership of
+OAuth credentials; the plugin neither reads nor copies them.
 
-Highlights:
+It then fills the practical multimodal gaps around that subscription connection:
+Grok subagent tasks, image understanding, Imagine tools, persistent audio/video
+cards, speech tools, and an original-file-first long-video workflow.
 
-- Subscription-backed work through the official Grok Build ACP process. OAuth
-  remains owned by the official CLI.
+What it provides:
+
+- A Grok subscription-backed subagent inside DSH through the official Grok
+  Build ACP process.
+- Grok task execution, image understanding, and Imagine image/video tools.
 - Native audio/video cards with seeking and restart persistence.
 - TTS, STT, and video analysis via a user-provided `XAI_API_KEY`.
 - MP4/MOV files up to 50 MB can be analyzed with the complete original file
@@ -22,9 +29,10 @@ dsh plugin --profile web add https://github.com/xisheng687/dsh-subscription-medi
 NODE_USE_ENV_PROXY=1 dsh web
 ```
 
-Requirements: DSH 0.1.0-rc.7+, Node 22.19+, ffmpeg/ffprobe, and the official
-`grok` CLI for subscription-backed ACP. Set `XAI_API_KEY` only for API audio
-and long-video synthesis.
+Requirements: DSH 0.1.0-rc.7+, Node 22.19+, ffmpeg/ffprobe, and an officially
+logged-in `grok` CLI for subscription-backed ACP. TTS, STT, and original-file
+video analysis are separate xAI API features and require your own `XAI_API_KEY`;
+they are not included in subscription OAuth.
 
 The public API documents file attachments but does not promise an internal
 "video token" representation. This project therefore calls the feature
