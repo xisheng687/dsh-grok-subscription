@@ -1,4 +1,4 @@
-# DSH Subscription Media Suite v0.2.0
+# DSH Grok Subscription v0.2.0
 
 这是一套把已登录的 Grok 订阅通过官方 Grok Build CLI / ACP 接进 DeepSeek Harness 的非官方社区插件。它让 Grok 可以在 DSH 中作为子代理处理任务、理解图片和调用 Imagine 工具，同时补上音视频消息卡和长视频工作流。OAuth 凭据仍由官方 CLI 保管，插件不读取、不复制。
 

@@ -1,4 +1,6 @@
-# Bring Your Grok Subscription into DeepSeek Harness
+# DSH Grok Subscription
+
+> Bring your Grok subscription into DeepSeek Harness.
 
 Paying for Grok but having it confined to the Grok Build CLI makes multi-agent
 work awkward: tasks, context, and generated media have to be moved by hand.
@@ -25,7 +27,7 @@ What it provides:
 Install the release tarball:
 
 ```bash
-dsh plugin --profile web add https://github.com/xisheng687/dsh-subscription-media-suite/releases/download/v0.2.0/dsh-subscription-media-suite-0.2.0.tgz
+dsh plugin --profile web add https://github.com/xisheng687/dsh-grok-subscription/releases/download/v0.2.0/dsh-subscription-media-suite-0.2.0.tgz
 NODE_USE_ENV_PROXY=1 dsh web
 ```
 

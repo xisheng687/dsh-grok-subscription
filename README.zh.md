@@ -1,4 +1,6 @@
-# 把 Grok 订阅接进 DeepSeek Harness
+# DSH Grok Subscription
+
+> 把 Grok 订阅接进 DeepSeek Harness。
 
 已经付了 Grok 订阅费，却只能在 Grok Build CLI 里使用；想让它和 DeepSeek Harness 一起工作，还要来回切窗口、复制内容，生成的音视频也只剩下一串文件路径——这就是本项目想解决的问题。
 
@@ -32,7 +34,7 @@ Grok 订阅接入只走官方 `grok agent stdio`。公开版中的 TTS、STT 和
 要求：DeepSeek Harness `0.1.0-rc.7+`、Node.js `22.19+`、ffmpeg/ffprobe。订阅子代理还需要官方 `grok` CLI 已登录。
 
 ```bash
-dsh plugin --profile web add https://github.com/xisheng687/dsh-subscription-media-suite/releases/download/v0.2.0/dsh-subscription-media-suite-0.2.0.tgz
+dsh plugin --profile web add https://github.com/xisheng687/dsh-grok-subscription/releases/download/v0.2.0/dsh-subscription-media-suite-0.2.0.tgz
 NODE_USE_ENV_PROXY=1 dsh web
 ```
 
