@@ -1,8 +1,9 @@
 {
   "name": "dsh-subscription-media-suite",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Native DSH audio/video cards and a compliant ACP bridge for subscription-backed multimodal work.",
   "type": "module",
+  "scripts": { "test": "node --test test/*.test.mjs" },
   "main": "index.js",
   "exports": { ".": "./index.js", "./client": "./client.js", "./package.json": "./package.json" },
   "files": ["index.js", "client.js", "cordis.patch.yml", "README.md", "README.zh.md", "CHANGELOG.md", "SECURITY.md", "THIRD_PARTY_NOTICES.md", "LICENSE", "packages"],

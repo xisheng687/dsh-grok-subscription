@@ -6,8 +6,9 @@
 
 - 用官方 Grok Build CLI 的 ACP 接口，把订阅账号作为 DSH 子代理使用；插件不读取、不复制 OAuth 文件。
 - 把本地 MP3、WAV、MP4、MOV、MKV、WebM 显示成可播放、可拖动、重启后仍能恢复的消息卡。
-- 提供 TTS、STT，以及“抽帧 + 15 分钟分段转写 + 多模态汇总”的长视频理解流程。
-- 上传音频或视频派生内容前明确询问；原长视频不会整段上传，临时帧和音频分析完成后删除。
+- 提供 TTS、STT，以及“原始视频文件优先、采样时间线回退”的长视频理解流程。
+- 支持把不超过 50 MB 的 MP4/MOV 连同原声音轨整体交给 xAI；不满足条件时再使用抽帧和带时间戳、说话人区分的转写。
+- 上传原文件或派生内容前明确询问；远端原文件处理后主动删除并设置 1 小时自动过期，临时帧和音频在本地分析结束后删除。
 
 ## 已经实际跑过的测试
 
@@ -18,6 +19,8 @@
 - 96 秒视频：23 帧，正确识别红 → 绿 → 蓝和循环测试语音。
 - 910 秒视频：成功跨过 15 分钟边界，生成 `[0:00]`、`[15:00]` 两段转写。
 - 订阅开发环境中的 xAI TTS / STT 往返测试。
+- 原始视频 Files API 上传、`input_file` 引用、完成后删除的协议级模拟测试。
+- 原始视频接口返回不支持时，自动回退到画面采样和原始 MP4 音轨转写的模拟测试。
 
 公开版对音频 API 和长视频综合使用用户自己的 `XAI_API_KEY`；订阅账号只走官方 `grok agent stdio`。这样做少一点“黑魔法”，但更适合公开分发，也不会冒充其他获得官方授权的客户端。
 
@@ -26,7 +29,7 @@
 要求：DeepSeek Harness `0.1.0-rc.7+`、Node.js `22.19+`、ffmpeg/ffprobe。订阅子代理还需要官方 `grok` CLI 已登录。
 
 ```bash
-dsh plugin --profile web add https://github.com/xisheng687/dsh-subscription-media-suite/releases/download/v0.1.0/dsh-subscription-media-suite-0.1.0.tgz
+dsh plugin --profile web add https://github.com/xisheng687/dsh-subscription-media-suite/releases/download/v0.2.0/dsh-subscription-media-suite-0.2.0.tgz
 NODE_USE_ENV_PROXY=1 dsh web
 ```
 
@@ -38,9 +41,10 @@ NODE_USE_ENV_PROXY=1 dsh web
 - `build-media`：只开放图片生成、编辑、图片转视频等媒体工具。
 - `present_local_media`：本地音视频消息卡，不上传文件。
 - `media_text_to_speech` / `media_speech_to_text`：xAI API 音频能力。
-- `analyze_long_video`：30 分钟以内最多 24 帧，更长视频最多 48 帧；上限 12 小时 / 12 GiB。
+- `analyze_long_video`：默认 `auto`。MP4/MOV ≤ 50 MB 时优先上传完整原文件和原声音轨；也可选择 `original` 禁止回退，或选择 `sampled` 减少上传量。
+- 采样回退：30 分钟以内最多 24 帧，更长视频最多 48 帧；MP4/MKV ≤ 200 MiB 时直接把原容器交给 STT，其他情况使用无 48 kbps 有损压缩的 FLAC 分段。上限 12 小时 / 12 GiB。
 
-长视频理解不是“把整个视频原样塞给模型”，而是工程化降采样。它适合会议、课程、演示和事件概要，不保证捕捉只出现几秒的细节。
+“原始文件模式”确实上传完整文件，但 xAI 没有公开承诺其内部一定按所谓 video token 计费或处理；准确说法是服务端原生文件理解。超过 Files API 限制后的采样模式仍可能漏掉只出现几秒的画面细节。
 
 ## 开发与致谢
 
@@ -53,6 +57,6 @@ NODE_USE_ENV_PROXY=1 dsh web
 - ffmpeg / ffprobe。
 - `lsjspl/dsh-plugin-grok2api-media-tool`（MIT）提供的 DSH 同源媒体路由和 toolview 思路。
 
-在此基础上独立完成并优化了：持久 HMAC capability URL、HTTP Range、原生音频卡、长视频分段流水线、上传授权、大小限制、符号链接防护、临时文件清理、重启持久化和发布版合规分层。
+在此基础上独立完成并优化了：原始视频文件模式、原声音轨优先、带时间戳和说话人的 STT 回退、持久 HMAC capability URL、HTTP Range、原生音频卡、长视频分段流水线、上传授权、大小限制、符号链接防护、远端/本地临时文件清理、重启持久化和发布版合规分层。
 
 本项目是非官方社区项目，不受 xAI 或 DeepSeek 背书。“Grok”仅用于准确说明兼容的官方服务。

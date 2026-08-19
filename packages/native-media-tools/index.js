@@ -274,11 +274,12 @@ export function apply(ctx) {
 
   ctx.tools.register(defineTool({
     name: 'analyze_long_video',
-    description: 'Understand a local long video with adaptive frame sampling, chunked speech transcription, and xAI multimodal synthesis. Requires XAI_API_KEY and asks before sending derived frames/audio.',
+    description: 'Understand a local video. Uses the original MP4/MOV file with its soundtrack when supported, otherwise falls back to sampled frames plus timestamped, diarized audio transcription. Requires XAI_API_KEY and asks before upload.',
     parameters: {
       input_path: { type: 'string', required: true, description: 'Absolute MP4, MOV, MKV, or WebM path; up to 12 GiB / 12 hours.' },
       prompt: { type: 'string', description: 'What to extract from the video. Defaults to a Chinese summary and timeline.' },
       language: { type: 'string', description: 'Speech language or auto. Defaults to auto.' },
+      strategy: { type: 'string', enum: ['auto', 'original', 'sampled'], description: 'auto prefers the original file; original forbids fallback; sampled minimizes upload size. Defaults to auto.' },
     },
     output: {
       schema: {
@@ -292,7 +293,8 @@ export function apply(ctx) {
               path: { type: 'string', required: true }, size: { type: 'integer', required: true }, duration: { type: 'number', required: true },
               width: { type: 'integer' }, height: { type: 'integer' }, video_codec: { type: 'string' }, has_audio: { type: 'boolean', required: true },
             },
-          }, sampled_frames: { type: 'integer', required: true }, frame_interval_seconds: { type: 'number', required: true },
+          }, strategy: { type: 'string', required: true }, audio_mode: { type: 'string', required: true },
+          fallback_reason: { type: 'string' }, sampled_frames: { type: 'integer', required: true }, frame_interval_seconds: { type: 'number', required: true },
         },
       },
       render: (_args, value) => textBlock(value),
@@ -304,16 +306,22 @@ export function apply(ctx) {
         inputPath: args.input_path,
         prompt: typeof args.prompt === 'string' ? args.prompt.trim().slice(0, 10_000) : '',
         language,
+        strategy: args.strategy ?? 'auto',
         token: accessToken(),
         signal: exec.signal,
-        async onPrepared(metadata) {
+        async onPrepared(metadata, plan) {
           const label = '允许本次分析'
+          const original = plan.strategy === 'original'
           const answer = await ctx.userQuestions.ask({
             questions: [{
               id: 'grok-video-analysis-upload', header: '视频理解授权',
-              question: `是否将 ${basename(args.input_path)} 的最多 48 张抽帧和分段音频发送到 xAI？`,
-              detail: `原视频不会整体上传。时长 ${metadata.duration.toFixed(1)} 秒，大小 ${metadata.size} 字节；临时抽帧/音频在分析结束后删除。`,
-              options: [{ label, description: '仅允许本次派生内容处理。' }, { label: '取消', description: '不发送任何派生内容。' }],
+              question: original
+                ? `是否将 ${basename(args.input_path)} 的原始视频和原声音轨发送到 xAI？`
+                : `是否将 ${basename(args.input_path)} 的抽帧和原声音轨转写发送到 xAI？`,
+              detail: original
+                ? `整段原文件会临时上传，处理后立即请求删除，最长保留 1 小时。时长 ${metadata.duration.toFixed(1)} 秒，大小 ${metadata.size} 字节。${plan.fallback ? '若服务端不接受该视频格式，会自动改用抽帧与转写。' : ''}`
+                : `原视频不会整体上传。最多发送 48 张抽帧和带时间戳/说话人信息的转写；临时文件在分析后删除。时长 ${metadata.duration.toFixed(1)} 秒。`,
+              options: [{ label, description: original ? '仅允许本次原文件处理及已说明的回退。' : '仅允许本次派生内容处理。' }, { label: '取消', description: '不发送任何内容。' }],
             }],
             ...(exec.agent ? { agent: exec.agent } : {}), signal: exec.signal,
           })

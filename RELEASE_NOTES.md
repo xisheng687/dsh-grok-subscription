@@ -1,18 +1,19 @@
-# DSH Subscription Media Suite v0.1.0
+# DSH Subscription Media Suite v0.2.0
 
-AI 工具生成了音频或视频，聊天里却只剩下一串路径——这是这个小插件最想解决的问题。
+这一版主要修正一件事：能交原视频时，就不应该先把它削成几张图和一段纯文字。
 
-首个公开版本提供：
+- `analyze_long_video` 现在默认使用 `auto`：MP4/MOV 不超过 50 MB 时，优先把完整原文件和原声音轨作为 xAI `input_file` 处理。
+- 可选择 `original`，只接受完整原文件模式，不允许静默降级。
+- 可选择 `sampled`，主动减少上传量。
+- 原文件完成后立即请求删除，同时上传时设置 1 小时自动过期。
+- 采样回退也升级了：小型 MP4/MKV 直接用原容器做 STT；其他输入使用 FLAC 分段，不再压成 48 kbps MP3。
+- STT 结果现在保留词级时间戳、填充词和说话人编号，更适合会议、访谈和课程。
+- 视频消息卡会明确显示本次使用的是“原始文件 + 原声音轨”还是采样回退。
 
-- 通过官方 Grok Build ACP 进程使用订阅账号，OAuth 始终由官方 CLI 保管。
-- 可播放、可拖动、重启后仍有效的 DSH 原生音频/视频消息卡。
-- 使用自有 `XAI_API_KEY` 的 TTS、STT 与“抽帧 + 分段转写 + 汇总”长视频理解。
-- 上传派生帧或音频前逐次询问；原长视频不会整体上传。
+需要讲清楚：xAI 官方网页明确支持 MP4/MOV 音视频理解，Files/Responses API 也支持 `input_file`，但开发者文档没有承诺内部一定使用所谓“原生 video token”。因此本项目把它叫作“原始视频文件模式”，不虚构底层实现。公开版仍需用户自己的 `XAI_API_KEY`；订阅账号只通过官方 Grok Build CLI/ACP 使用。
 
-这不是官方产品，也没有试图包装成一个万能方案。长视频使用工程化采样，短暂细节可能漏掉；API 音频和视频综合需要用户自己的 API key。
+测试包括：完整文件 multipart 顺序、`input_file` 引用、远端删除、HTTP 415 自动回退、原 MP4 音轨直传 STT，以及 910 秒样本的两段 FLAC 原声转写时间轴。所有协议调用使用本地模拟 API；维护者机器没有打包或使用任何用户 API key。
 
-项目主要由 Codex 协助研究、编写、测试与发布审计。它基于 DeepSeek Harness、官方 Grok Build CLI / ACP、xAI 公共 API、ffmpeg，并参考了 `lsjspl/dsh-plugin-grok2api-media-tool` 的 DSH 同源媒体路由与 toolview 思路；完整致谢和独立优化见仓库 README 与第三方声明。
+项目主要由 Codex 协助研究、实现、测试和发布审计。完整第三方技术来源及自主优化说明见 README 与 `THIRD_PARTY_NOTICES.md`。
 
-发布包已在全新 DSH profile 中安装、启动、重启并回归媒体 Range；Gitleaks 和 TruffleHog 对最终解包产物均为 0 发现。详细记录见 `RELEASE_AUDIT.md`。
-
-SHA-256: `575ca07dd8ac11d3f9c3e9d343b62a5d1e2177134990b61f41af2bbe69a9f101`
+SHA-256: `f8e4b92e06182660e3011fb5a68700a18f37831fcf49f7cc9eefa2aae5777e05`

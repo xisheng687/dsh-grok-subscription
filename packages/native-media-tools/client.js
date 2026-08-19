@@ -38,7 +38,9 @@
         return h('div', { style: shell },
           value.url ? h('video', { src: value.url, controls: true, playsInline: true, preload: 'metadata', style: player }) : null,
           h('div', { style: { marginTop: '12px', whiteSpace: 'pre-wrap', lineHeight: 1.65 } }, value.analysis || '分析完成。'),
-          h('p', { style: muted }, `${Number(value.metadata?.duration || 0).toFixed(1)} 秒 · ${value.sampled_frames || 0} 帧 · 约每 ${Number(value.frame_interval_seconds || 0).toFixed(1)} 秒采样`),
+          h('p', { style: muted }, value.strategy === 'original-file'
+            ? `${Number(value.metadata?.duration || 0).toFixed(1)} 秒 · 原始视频文件 + 原声音轨`
+            : `${Number(value.metadata?.duration || 0).toFixed(1)} 秒 · ${value.sampled_frames || 0} 帧 · ${value.audio_mode || '无音轨'} · 约每 ${Number(value.frame_interval_seconds || 0).toFixed(1)} 秒采样`),
         )
       }
 
