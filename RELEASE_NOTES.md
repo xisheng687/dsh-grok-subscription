@@ -1,21 +1,17 @@
-# DSH Grok Subscription v0.2.0
+# DSH Grok Subscription v0.3.0
 
-这是一套把已登录的 Grok 订阅通过官方 Grok Build CLI / ACP 接进 DeepSeek Harness 的非官方社区插件。它让 Grok 可以在 DSH 中作为子代理处理任务、理解图片和调用 Imagine 工具，同时补上音视频消息卡和长视频工作流。OAuth 凭据仍由官方 CLI 保管，插件不读取、不复制。
+DSH 自己把图片附件做好了，这个插件就应该少做一点。
 
-v0.2.0 主要修正一件事：能交原视频时，就不应该先把它削成几张图和一段纯文字。
+v0.3.0 对齐 DeepSeek Harness `0.1.0-rc.8`：图片粘贴、拖放、持久存储和历史预览全部交给 DSH 原生能力，插件不再携带重复的图片界面或存储层。它继续专注两件事：通过官方 Grok Build CLI / ACP 使用已经登录的 Grok 订阅，以及补上 DSH 尚未原生支持的音频、视频和长视频工作流。
 
-- `analyze_long_video` 现在默认使用 `auto`：MP4/MOV 不超过 50 MB 时，优先把完整原文件和原声音轨作为 xAI `input_file` 处理。
-- 可选择 `original`，只接受完整原文件模式，不允许静默降级。
-- 可选择 `sampled`，主动减少上传量。
-- 原文件完成后立即请求删除，同时上传时设置 1 小时自动过期。
-- 采样回退也升级了：小型 MP4/MKV 直接用原容器做 STT；其他输入使用 FLAC 分段，不再压成 48 kbps MP3。
-- STT 结果现在保留词级时间戳、填充词和说话人编号，更适合会议、访谈和课程。
-- 视频消息卡会明确显示本次使用的是“原始文件 + 原声音轨”还是采样回退。
+主要变化：
 
-需要讲清楚：Grok 订阅子代理通过官方 Grok Build CLI/ACP 使用。TTS、STT 和原始文件长视频理解是独立的 xAI API 能力，需要用户自己的 `XAI_API_KEY`，不属于订阅 OAuth 权限。xAI 开发者文档也没有承诺内部一定使用所谓“原生 video token”，因此本项目只把它叫作“原始视频文件模式”。
+- 最低版本升级到 DSH `0.1.0-rc.8`。
+- 浏览器依赖从 runtime、conversation、slots 三条边简化为官方 `ui-tool` 表面。
+- 删除没有参与实际加载的嵌套 ACP 包装包和重复 bundle manifest。
+- 保留音视频播放器、TTS/STT、原文件优先长视频理解，因为 rc.8 的核心附件目前仍只支持 PNG/JPEG/WebP/GIF。
+- 保留两个 Grok ACP 通道：默认拒绝权限的通用子代理，以及只开放 Imagine 媒体工具的通道。
 
-测试包括：完整文件 multipart 顺序、`input_file` 引用、远端删除、HTTP 415 自动回退、原 MP4 音轨直传 STT，以及 910 秒样本的两段 FLAC 原声转写时间轴。所有协议调用使用本地模拟 API；维护者机器没有打包或使用任何用户 API key。
+需要说明：DSH 输入框中的图片属于当前主会话，不会自动跨进程继承给 Grok ACP 子代理。要让 Grok 处理工作区中的图片，请在委派任务中给出本地文件路径。订阅认证仍完全由官方 `grok` CLI 保管；TTS、STT 和原文件视频分析仍需要用户自己的 `XAI_API_KEY`。
 
-项目主要由 Codex 协助研究、实现、测试和发布审计。完整第三方技术来源及自主优化说明见 README 与 `THIRD_PARTY_NOTICES.md`。
-
-SHA-256: `f8e4b92e06182660e3011fb5a68700a18f37831fcf49f7cc9eefa2aae5777e05`
+本项目主要由 Codex 协助研究、实现、测试和发布审计，是非官方社区项目，不受 xAI 或 DeepSeek 背书。

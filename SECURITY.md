@@ -10,5 +10,7 @@
 - Original-video, STT, and derived-media uploads require per-operation confirmation.
 - Original video uploads use a one-hour Files API expiry and are also deleted
   immediately after success, failure, or cancellation whenever an ID was issued.
+- Image attachments use DSH 0.1.0-rc.8's validated content-addressed store; this
+  plugin does not create a second image upload route or image credential path.
 
 Please report vulnerabilities privately through GitHub Security Advisories.

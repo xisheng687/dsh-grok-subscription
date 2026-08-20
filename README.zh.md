@@ -4,12 +4,15 @@
 
 已经付了 Grok 订阅费，却只能在 Grok Build CLI 里使用；想让它和 DeepSeek Harness 一起工作，还要来回切窗口、复制内容，生成的音视频也只剩下一串文件路径——这就是本项目想解决的问题。
 
-这是一套非官方 DSH 插件：它通过 xAI 官方 Grok Build CLI 的 ACP 接口，把已经登录的 Grok 订阅账号接成 DeepSeek Harness 里的子代理。OAuth 仍由官方 CLI 保管，插件不读取、不复制登录凭据。在此基础上，它补上图片生成、音视频消息卡、语音能力和长视频理解，让 Grok 的多模态结果尽量留在同一个 DSH 工作流里。
+这是一套非官方 DSH 插件：它通过 xAI 官方 Grok Build CLI 的 ACP 接口，把已经登录的 Grok 订阅账号接成 DSH 里的子代理。OAuth 仍由官方 CLI 保管，插件不读取、不复制登录凭据。
+
+DSH `0.1.0-rc.8` 已经原生支持图片粘贴、拖放、持久化和历史预览，所以本插件不再重复实现图片附件。它只补 DSH 目前还没有的部分：Grok 订阅子代理、Imagine 媒体工具、音视频播放器、语音接口和长视频理解。
 
 ## 它能做什么
 
 - 用官方 Grok Build CLI 的 ACP 接口，把订阅账号作为 DSH 子代理使用；插件不读取、不复制 OAuth 文件。
-- 在 DSH 中调用 Grok 子代理处理任务、理解图片，并使用 Imagine 图片/视频工具。
+- 在 DSH 中调用 Grok 子代理处理任务，并使用 Imagine 图片/视频工具。
+- 图片输入、存储和历史预览直接使用 DSH rc.8 的原生附件能力，不安装第二套图片 UI。
 - 把本地 MP3、WAV、MP4、MOV、MKV、WebM 显示成可播放、可拖动、重启后仍能恢复的消息卡。
 - 提供 TTS、STT，以及“原始视频文件优先、采样时间线回退”的长视频理解流程。
 - 支持把不超过 50 MB 的 MP4/MOV 连同原声音轨整体交给 xAI；不满足条件时再使用抽帧和带时间戳、说话人区分的转写。
@@ -31,17 +34,18 @@ Grok 订阅接入只走官方 `grok agent stdio`。公开版中的 TTS、STT 和
 
 ## 安装
 
-要求：DeepSeek Harness `0.1.0-rc.7+`、Node.js `22.19+`、ffmpeg/ffprobe。订阅子代理还需要官方 `grok` CLI 已登录。
+要求：DeepSeek Harness `0.1.0-rc.8+`、Node.js `22.19+`、ffmpeg/ffprobe。订阅子代理还需要官方 `grok` CLI 已登录。
 
 ```bash
-dsh plugin --profile web add https://github.com/xisheng687/dsh-grok-subscription/releases/download/v0.2.0/dsh-subscription-media-suite-0.2.0.tgz
-NODE_USE_ENV_PROXY=1 dsh web
+npx @deepseek-ai/dsh@0.1.0-rc.8 plugin --profile web add https://github.com/xisheng687/dsh-grok-subscription/releases/download/v0.3.0/dsh-subscription-media-suite-0.3.0.tgz
+NODE_USE_ENV_PROXY=1 npx @deepseek-ai/dsh@0.1.0-rc.8 web
 ```
 
 需要 TTS、STT 或长视频 API 综合时，在启动 DSH 前设置 `XAI_API_KEY`。仅播放本地音视频、或使用官方 CLI 订阅子代理，不需要 API key。
 
 ## 能力与边界
 
+- DSH 原生图片：PNG/JPEG/WebP/GIF 的粘贴、拖放、持久存储和历史预览，由 rc.8 核心负责。
 - `build-native`：官方 CLI 的只读优先子代理，默认拒绝 ACP 权限请求。
 - `build-media`：只开放图片生成、编辑、图片转视频等媒体工具。
 - `present_local_media`：本地音视频消息卡，不上传文件。
@@ -50,6 +54,8 @@ NODE_USE_ENV_PROXY=1 dsh web
 - 采样回退：30 分钟以内最多 24 帧，更长视频最多 48 帧；MP4/MKV ≤ 200 MiB 时直接把原容器交给 STT，其他情况使用无 48 kbps 有损压缩的 FLAC 分段。上限 12 小时 / 12 GiB。
 
 “原始文件模式”确实上传完整文件，但 xAI 没有公开承诺其内部一定按所谓 video token 计费或处理；准确说法是服务端原生文件理解。超过 Files API 限制后的采样模式仍可能漏掉只出现几秒的画面细节。
+
+DSH 的图片附件不会自动继承到独立的 ACP 子代理进程；需要 Grok 处理工作区图片时，请在任务中给出该文件的本地路径。音频和视频还不是 DSH rc.8 的核心附件类型，因此本插件仍保留自己的播放器与分析工具。
 
 ## 开发与致谢
 

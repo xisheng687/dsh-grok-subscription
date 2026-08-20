@@ -1,4 +1,0 @@
-- insert:
-    - id: tool-native-media
-      name: 'dsh-native-media-tools'
-      config: {}

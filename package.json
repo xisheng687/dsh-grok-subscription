@@ -1,33 +1,29 @@
 {
   "name": "dsh-subscription-media-suite",
-  "version": "0.2.0",
-  "description": "Connect an official Grok subscription to DeepSeek Harness as an ACP subagent, with multimodal media tools.",
+  "version": "0.3.0",
+  "description": "Connect an official Grok subscription to DSH as an ACP subagent, extending its native image support with audio and video tools.",
   "type": "module",
   "scripts": { "test": "node --test test/*.test.mjs" },
   "main": "index.js",
   "exports": { ".": "./index.js", "./client": "./client.js", "./package.json": "./package.json" },
-  "files": ["index.js", "client.js", "cordis.patch.yml", "README.md", "README.zh.md", "CHANGELOG.md", "SECURITY.md", "THIRD_PARTY_NOTICES.md", "LICENSE", "packages"],
+  "files": ["index.js", "client.js", "cordis.patch.yml", "README.md", "README.zh.md", "CHANGELOG.md", "SECURITY.md", "THIRD_PARTY_NOTICES.md", "LICENSE", "packages/native-media-tools/*.js"],
   "dsh": {
     "bundle": { "patch": "./cordis.patch.yml" },
     "client": {
       "platform": "web",
       "inject": [
-        "@deepseek-ai/dsh-client-runtime",
-        "@deepseek-ai/dsh-client-ui-conversation",
-        "@deepseek-ai/dsh-client-ui-slots"
+        "@deepseek-ai/dsh-client-ui-tool"
       ]
     }
   },
   "dependencies": {
-    "@deepseek-ai/dsh-subagent-acp": "^0.1.0-rc.7"
+    "@deepseek-ai/dsh-subagent-acp": "^0.1.0-rc.8"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "^4.0.1",
-    "@deepseek-ai/dsh-tools": "^0.1.0-rc.7",
-    "@deepseek-ai/dsh-user-questions": "^0.1.0-rc.7",
-    "@deepseek-ai/dsh-client-runtime": "^0.1.0-rc.7",
-    "@deepseek-ai/dsh-client-ui-conversation": "^0.1.0-rc.7",
-    "@deepseek-ai/dsh-client-ui-slots": "^0.1.0-rc.7",
+    "@deepseek-ai/dsh-tools": "^0.1.0-rc.8",
+    "@deepseek-ai/dsh-user-questions": "^0.1.0-rc.8",
+    "@deepseek-ai/dsh-client-ui-tool": "^0.1.0-rc.8",
     "react": "^18.2.0"
   },
   "repository": { "type": "git", "url": "git+https://github.com/xisheng687/dsh-grok-subscription.git" },

@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.3.0 - 2026-08-20
+
+### DSH rc.8 integration
+
+- Require DeepSeek Harness 0.1.0-rc.8 and use its native durable image attachment UI.
+- Reduce the client dependency edge to the official `dsh-client-ui-tool` surface.
+- Keep audio/video cards and long-video analysis because rc.8 core attachments remain image-only.
+- Remove unused nested bundle manifests and the duplicate ACP wrapper package from the release artifact.
+
+### Compatibility
+
+- Keep the public npm package id and Cordis instance ids unchanged so existing installations upgrade in place.
+- Document that composer images are not implicitly inherited by the separate Grok ACP subprocess.
+
 ## 0.2.0 - 2026-08-19
 
 ### Features
